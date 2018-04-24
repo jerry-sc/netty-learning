@@ -56,6 +56,9 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
         logger.debug("-Dio.netty.threadLocalMap.stringBuilder.maxSize: {}", STRING_BUILDER_MAX_SIZE);
     }
 
+    /**
+     * 更快的获取方式，假定已经设置过了，那么无需再去判断是否已经存在
+     */
     public static InternalThreadLocalMap getIfSet() {
         Thread thread = Thread.currentThread();
         if (thread instanceof FastThreadLocalThread) {
@@ -64,6 +67,9 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
         return slowThreadLocalMap.get();
     }
 
+    /**
+     * 两种方式获得Map，根据当前线程的类型，如果是fast，那么直接获取；否则，该map保存在threadLocal中
+     */
     public static InternalThreadLocalMap get() {
         Thread thread = Thread.currentThread();
         if (thread instanceof FastThreadLocalThread) {
@@ -104,8 +110,12 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
         slowThreadLocalMap.remove();
     }
 
+    /**
+     * 下一个元素位置
+     */
     public static int nextVariableIndex() {
         int index = nextIndex.getAndIncrement();
+        // 超过int范围，则报错，无法存储太多的变量
         if (index < 0) {
             nextIndex.decrementAndGet();
             throw new IllegalStateException("too many thread-local indexed variables");
@@ -121,6 +131,9 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
     // With CompressedOops enabled, an instance of this class should occupy at least 128 bytes.
     public long rp1, rp2, rp3, rp4, rp5, rp6, rp7, rp8, rp9;
 
+    /**
+     * 初始化，使用长度32的数组存储
+     */
     private InternalThreadLocalMap() {
         super(newIndexedVariableTable());
     }
@@ -287,6 +300,7 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
     }
 
     /**
+     * 设置新值
      * @return {@code true} if and only if a new thread-local variable has been created
      */
     public boolean setIndexedVariable(int index, Object value) {

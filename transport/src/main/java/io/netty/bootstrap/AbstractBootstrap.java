@@ -333,6 +333,7 @@ public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C ext
         Channel channel = null;
         try {
             channel = channelFactory.newChannel();
+            // 主要初始化 自定义的handler、channel的配置、channel的属性值; 基本上就是bootstrap上链式调用的内容
             init(channel);
         } catch (Throwable t) {
             if (channel != null) {

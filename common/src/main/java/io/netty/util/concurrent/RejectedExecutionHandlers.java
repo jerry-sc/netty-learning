@@ -22,9 +22,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 
 /**
+ * 类似 RejectedExecutionHandlers 的工厂函数，内置了一些 拒绝处理器
  * Expose helper methods which create different {@link RejectedExecutionHandler}s.
  */
 public final class RejectedExecutionHandlers {
+
+    /**
+     * 简单的拒绝策略 只是抛出异常
+     */
     private static final RejectedExecutionHandler REJECT = new RejectedExecutionHandler() {
         @Override
         public void rejected(Runnable task, SingleThreadEventExecutor executor) {

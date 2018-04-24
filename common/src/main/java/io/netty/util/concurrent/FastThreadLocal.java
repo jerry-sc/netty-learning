@@ -129,8 +129,14 @@ public class FastThreadLocal<V> {
         variablesToRemove.remove(variable);
     }
 
+    /**
+     * map中在该位置会存放当前值
+     */
     private final int index;
 
+    /**
+     * map中在该位置会存放该threadlocal 增强出现过的，但还没有删除的值
+     */
     private final int cleanerFlagIndex;
 
     public FastThreadLocal() {

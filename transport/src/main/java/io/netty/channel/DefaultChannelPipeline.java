@@ -50,6 +50,9 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     private static final String HEAD_NAME = generateName0(HeadContext.class);
     private static final String TAIL_NAME = generateName0(TailContext.class);
 
+    /**
+     * handler 名称的缓存
+     */
     private static final FastThreadLocal<Map<Class<?>, String>> nameCaches =
             new FastThreadLocal<Map<Class<?>, String>>() {
         @Override
@@ -82,9 +85,11 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     private boolean firstRegistration = true;
 
     /**
+     * 由于时间处理器还没有被注册进来，所以开始之前的事件都被临时链接起来
      * This is the head of a linked list that is processed by {@link #callHandlerAddedForAllHandlers()} and so process
      * all the pending {@link #callHandlerAdded0(AbstractChannelHandlerContext)}.
      *
+     * 因为考虑到这样的时间不多，所以使用链式结构带来的开销更加划算，节省空间
      * We only keep the head because it is expected that the list is used infrequently and its size is small.
      * Thus full iterations to do insertions is assumed to be a good compromised to saving memory and tail management
      * complexity.
@@ -92,6 +97,8 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     private PendingHandlerCallback pendingHandlerCallbackHead;
 
     /**
+     * 表明该channel是否被注册到eventloop 上，进行时间处理
+     *
      * Set to {@code true} once the {@link AbstractChannel} is registered.Once set to {@code true} the value will never
      * change.
      */
@@ -124,6 +131,13 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return touch ? ReferenceCountUtil.touch(msg, next) : msg;
     }
 
+    /**
+     * 为该handler 生成上下文环境，放置到pipeline中去
+     * @param group group
+     * @param name name of the handler
+     * @param handler handler
+     * @return context of the handler
+     */
     private AbstractChannelHandlerContext newContext(EventExecutorGroup group, String name, ChannelHandler handler) {
         return new DefaultChannelHandlerContext(this, childExecutor(group), name, handler);
     }
@@ -174,8 +188,11 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             // If the registered is false it means that the channel was not registered on an eventloop yet.
             // In this case we add the context to the pipeline and add a task that will call
             // ChannelHandler.handlerAdded(...) once the channel is registered.
+            // 如果时间处理器还未注册，那么将事件缓存起来，之后再调用
             if (!registered) {
+                // 修改handler状态
                 newCtx.setAddPending();
+                // 创建待处理handler
                 callHandlerCallbackLater(newCtx, true);
                 return this;
             }
@@ -245,6 +262,9 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return this;
     }
 
+    /**
+     * 可以看到每次添加的位置都是tail的前一个位置
+     */
     private void addLast0(AbstractChannelHandlerContext newCtx) {
         AbstractChannelHandlerContext prev = tail.prev;
         newCtx.prev = prev;
@@ -304,6 +324,12 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         ctx.prev = newCtx;
     }
 
+    /**
+     * handler 名称检查与创建
+     * @param name name
+     * @param handler channel handler
+     * @return name of the handler
+     */
     private String filterName(String name, ChannelHandler handler) {
         if (name == null) {
             return generateName(handler);
@@ -421,7 +447,12 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return this;
     }
 
+    /**
+     * 为handler设置名称
+     * @param handler handler
+     */
     private String generateName(ChannelHandler handler) {
+        // 首先从缓存中查找该handler类是否已经添加过，如果没有，创建名称，并加入到缓存中
         Map<Class<?>, String> cache = nameCaches.get();
         Class<?> handlerType = handler.getClass();
         String name = cache.get(handlerType);
@@ -430,6 +461,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
             cache.put(handlerType, name);
         }
 
+        // 可能出现多个handler是同一类型的情况，所以为了避免与此，如果出现相同类，那么修改# 后面的数字，表示第几个
         // It's not very likely for a user to put more than one handler of the same type, but make sure to avoid
         // any name conflicts.  Note that we don't cache the names generated here.
         if (context0(name) != null) {
@@ -445,6 +477,9 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         return name;
     }
 
+    /**
+     * 给每个handler设置名称： ClassName#0  类似这样格式
+     */
     private static String generateName0(Class<?> handlerType) {
         return StringUtil.simpleClassName(handlerType) + "#0";
     }
@@ -1152,6 +1187,11 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         }
     }
 
+    /**
+     * 创建待处理事件，以链接形式连接
+     * @param ctx handler
+     * @param added 事件类型判定，如果是true，表示是handler添加事件，否则是handler事件
+     */
     private void callHandlerCallbackLater(AbstractChannelHandlerContext ctx, boolean added) {
         assert !registered;
 
@@ -1447,8 +1487,14 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         }
     }
 
+    /**
+     * 封装待处理的事件
+     */
     private abstract static class PendingHandlerCallback implements Runnable {
         final AbstractChannelHandlerContext ctx;
+        /**
+         * 链式存储结构，连接所有待处理的事件
+         */
         PendingHandlerCallback next;
 
         PendingHandlerCallback(AbstractChannelHandlerContext ctx) {

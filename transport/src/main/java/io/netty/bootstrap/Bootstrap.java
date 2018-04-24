@@ -168,6 +168,7 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
      * @see #connect()
      */
     private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {
+        // 初始化channel 以及 注册事件处理器
         final ChannelFuture regFuture = initAndRegister();
         final Channel channel = regFuture.channel();
 
@@ -269,14 +270,16 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
     @Override
     @SuppressWarnings("unchecked")
     void init(Channel channel) throws Exception {
+        // 设置之前用户自定义的handler
         ChannelPipeline p = channel.pipeline();
         p.addLast(config.handler());
 
+        // 设置用户自定义的channel的配置信息
         final Map<ChannelOption<?>, Object> options = options0();
         synchronized (options) {
             setChannelOptions(channel, options, logger);
         }
-
+        // 设置用户自定义的channel相关的属性信息
         final Map<AttributeKey<?>, Object> attrs = attrs0();
         synchronized (attrs) {
             for (Entry<AttributeKey<?>, Object> e: attrs.entrySet()) {

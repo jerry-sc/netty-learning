@@ -50,6 +50,12 @@ import java.util.Map;
 public abstract class AbstractBootstrap<B extends AbstractBootstrap<B, C>, C extends Channel> implements Cloneable {
 
     volatile EventLoopGroup group;
+
+    /**
+     * 创建channel的工厂，共有两种创建方式。
+     * 1. 由客户端用户自行实现工厂函数
+     * 2. 默认的通过反射来创建的工厂
+     */
     @SuppressWarnings("deprecation")
     private volatile ChannelFactory<? extends C> channelFactory;
 

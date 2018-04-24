@@ -213,6 +213,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     public final ChannelPipeline addLast(EventExecutorGroup group, String name, ChannelHandler handler) {
         final AbstractChannelHandlerContext newCtx;
         synchronized (this) {
+            // 合法性检测，如果一个handler是共享的，那么可以多次添加；否则，只能添加一次
             checkMultiplicity(handler);
 
             newCtx = newContext(group, filterName(name, handler), handler);

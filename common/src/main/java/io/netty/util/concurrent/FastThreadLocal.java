@@ -24,9 +24,15 @@ import java.util.IdentityHashMap;
 import java.util.Set;
 
 /**
+ * 整个流程可以参考 ThreadLocal
+ *
+ * ThreadLocal 的替代品，更高访问效率实现, 主要是在哈希计算的优化
+ *
  * A special variant of {@link ThreadLocal} that yields higher access performance when accessed from a
  * {@link FastThreadLocalThread}.
  * <p>
+ *    说明：当频繁访问的时候，每次计算哈希值是会带来不小的开销的，所以这里使用常量下标访问，省去了计算哈希值的时间，会有性能上的提升
+ *
  * Internally, a {@link FastThreadLocal} uses a constant index in an array, instead of using hash code and hash table,
  * to look for a variable.  Although seemingly very subtle, it yields slight performance advantage over using a hash
  * table, and it is useful when accessed frequently.
@@ -142,7 +148,7 @@ public class FastThreadLocal<V> {
         if (v != InternalThreadLocalMap.UNSET) {
             return (V) v;
         }
-
+        // 如果当前位置还没有设置过值，那么进行初始化操作
         V value = initialize(threadLocalMap);
         registerCleaner(threadLocalMap);
         return value;

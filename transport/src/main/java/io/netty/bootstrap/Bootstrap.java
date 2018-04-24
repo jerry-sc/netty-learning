@@ -162,6 +162,9 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
     }
 
     /**
+     * @param localAddress 本地地址
+     * @param remoteAddress 想要建立连接的服务器地址
+     *
      * @see #connect()
      */
     private ChannelFuture doResolveAndConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) {

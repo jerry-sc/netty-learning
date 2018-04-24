@@ -19,12 +19,19 @@ import io.netty.util.internal.InternalThreadLocalMap;
 import io.netty.util.internal.UnstableApi;
 
 /**
+ * 为了使用FastThreadLocal 而设计的新的线程类
  * A special {@link Thread} that provides fast access to {@link FastThreadLocal} variables.
  */
 public class FastThreadLocalThread extends Thread {
     // This will be set to true if we have a chance to wrap the Runnable.
+    /**
+     * 表示，线程运行完毕后，是否会清除自定义设置的 线程变量
+     */
     private final boolean cleanupFastThreadLocals;
 
+    /**
+     * 存储线程变量的Map
+     */
     private InternalThreadLocalMap threadLocalMap;
 
     public FastThreadLocalThread() {

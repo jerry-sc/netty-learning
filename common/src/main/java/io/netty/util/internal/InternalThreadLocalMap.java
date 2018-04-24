@@ -31,6 +31,8 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
+ * 一个线程有一个 InternalThreadLocalMap， 底层使用数组实现，key即为数组下标，每创建一个FastThreadLocal 后移一位，到达上限时，进行扩容
+ *
  * The internal data structure that stores the thread-local variables for Netty and all {@link FastThreadLocal}s.
  * Note that this class is for internal use only and is subject to change at any time.  Use {@link FastThreadLocal}
  * unless you know what you are doing.
@@ -299,6 +301,11 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
         }
     }
 
+    /**
+     * 扩容后再进行设置值
+     * @param index index
+     * @param value value
+     */
     private void expandIndexedVariableTableAndSet(int index, Object value) {
         Object[] oldArray = indexedVariables;
         final int oldCapacity = oldArray.length;

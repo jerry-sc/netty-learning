@@ -20,6 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
+ * 进一步扩展了JUC包下的 Future 接口，提供更多的异步操作方法，例如可以设置监听器
+ *
  * 封装异步操作的结果，以及提供获取结果的方法
  * The result of an asynchronous operation.
  */

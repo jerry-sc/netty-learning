@@ -16,7 +16,7 @@
 package io.netty.util.concurrent;
 
 /**
- * 相比Future来说，运行自己设置异步操作结果，而无需等待异步操作完成
+ * 相比Future来说，允许自己设置异步操作结果，而无需等待异步操作完成
  * Special {@link Future} which is writable.
  */
 public interface Promise<V> extends Future<V> {

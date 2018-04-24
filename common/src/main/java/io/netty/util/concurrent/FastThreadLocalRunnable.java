@@ -17,6 +17,9 @@ package io.netty.util.concurrent;
 
 import io.netty.util.internal.ObjectUtil;
 
+/**
+ * 包装实现，目的在于线程退出执行后，清除之前为该线程设定的 变量
+ */
 final class FastThreadLocalRunnable implements Runnable {
     private final Runnable runnable;
 

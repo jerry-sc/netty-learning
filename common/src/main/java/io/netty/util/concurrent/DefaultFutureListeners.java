@@ -17,8 +17,14 @@ package io.netty.util.concurrent;
 
 import java.util.Arrays;
 
+/**
+ * 存储所有监听器
+ */
 final class DefaultFutureListeners {
 
+    /**
+     * 监听器列表，每次扩容2倍
+     */
     private GenericFutureListener<? extends Future<?>>[] listeners;
     private int size;
     private int progressiveSize; // the number of progressive listeners

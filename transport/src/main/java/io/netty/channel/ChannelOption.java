@@ -23,6 +23,8 @@ import java.net.InetAddress;
 import java.net.NetworkInterface;
 
 /**
+ * 通道的配置属性
+ *
  * A {@link ChannelOption} allows to configure a {@link ChannelConfig} in a type-safe
  * way. Which {@link ChannelOption} is supported depends on the actual implementation
  * of {@link ChannelConfig} and may depend on the nature of the transport it belongs
@@ -32,6 +34,9 @@ import java.net.NetworkInterface;
  */
 public class ChannelOption<T> extends AbstractConstant<ChannelOption<T>> {
 
+    /**
+     * 所有配置属性都存储在常量池中
+     */
     private static final ConstantPool<ChannelOption<Object>> pool = new ConstantPool<ChannelOption<Object>>() {
         @Override
         protected ChannelOption<Object> newConstant(int id, String name) {
@@ -133,6 +138,8 @@ public class ChannelOption<T> extends AbstractConstant<ChannelOption<T>> {
 
     /**
      * Creates a new {@link ChannelOption} with the specified unique {@code name}.
+     * @param id
+     * @param name
      */
     private ChannelOption(int id, String name) {
         super(id, name);

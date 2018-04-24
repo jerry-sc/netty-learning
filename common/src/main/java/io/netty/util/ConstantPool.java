@@ -30,6 +30,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public abstract class ConstantPool<T extends Constant<T>> {
 
+    /**
+     *
+     */
     private final ConcurrentMap<String, T> constants = PlatformDependent.newConcurrentHashMap();
 
     private final AtomicInteger nextId = new AtomicInteger(1);
@@ -124,6 +127,12 @@ public abstract class ConstantPool<T extends Constant<T>> {
         return name;
     }
 
+    /**
+     * 由子类自行实现常量的创建操作
+     * @param id 常量编号
+     * @param name 常量名称
+     * @return created constant
+     */
     protected abstract T newConstant(int id, String name);
 
     @Deprecated

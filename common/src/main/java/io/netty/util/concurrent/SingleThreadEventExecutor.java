@@ -44,7 +44,6 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 
 /**
  * Abstract base class for {@link OrderedEventExecutor}'s that execute all its submitted tasks in a single thread.
- *
  */
 public abstract class SingleThreadEventExecutor extends AbstractScheduledEventExecutor implements OrderedEventExecutor {
 
@@ -81,9 +80,19 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
     private final Queue<Runnable> taskQueue;
 
+    /**
+     * 该实例时一个FastThreadLocalThread实例，
+     * SingleThreadEventExecutor 是 Netty 中对本地线程的抽象, 它内部有一个 Thread thread 属性,
+     * 存储了一个本地 Java 线程. 因此我们可以认为, 一个 NioEventLoop 其实和一个特定的线程绑定, 并且在其生命周期内, 绑定的线程都不会再改变.
+     */
     private volatile Thread thread;
     @SuppressWarnings("unused")
     private volatile ThreadProperties threadProperties;
+
+    /**
+     * 负责创建线程执行，由 {@link MultithreadEventExecutorGroup} 中创建
+     * @see ThreadPerTaskExecutor
+     */
     private final Executor executor;
     private volatile boolean interrupted;
 
@@ -102,6 +111,9 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
     private volatile long gracefulShutdownTimeout;
     private long gracefulShutdownStartTime;
 
+    /**
+     * 当该事件执行器 终止后的 异步返回结果
+     */
     private final Promise<?> terminationFuture = new DefaultPromise<Void>(GlobalEventExecutor.INSTANCE);
 
     /**
@@ -270,11 +282,16 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
         }
     }
 
+    /**
+     * 从调度队列中获取已经就绪的任务
+     */
     private boolean fetchFromScheduledTaskQueue() {
         long nanoTime = AbstractScheduledEventExecutor.nanoTime();
         Runnable scheduledTask  = pollScheduledTask(nanoTime);
+        // 循环，获取调度队列中的所有就绪任务，加入到taskQueue中
         while (scheduledTask != null) {
             if (!taskQueue.offer(scheduledTask)) {
+                // 从调度任务队列中获取后，尝试加入本地的FIFO队列中，如果加入失败，那么放回原来的调度队列，重试进行获取
                 // No space left in the task queue add it back to the scheduledTaskQueue so we pick it up again.
                 scheduledTaskQueue().add((ScheduledFutureTask<?>) scheduledTask);
                 return false;
@@ -341,6 +358,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
     }
 
     /**
+     * 运行taskQueue 中所有的任务
      * Poll all tasks from the task queue and run them via {@link Runnable#run()} method.
      *
      * @return {@code true} if and only if at least one task was run
@@ -351,15 +369,17 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
         boolean ranAtLeastOne = false;
 
         do {
+            // 从调度队列中获取已经就绪的任务
             fetchedAll = fetchFromScheduledTaskQueue();
             if (runAllTasksFrom(taskQueue)) {
                 ranAtLeastOne = true;
-            }
+            } //
         } while (!fetchedAll); // keep on processing until we fetched all scheduled tasks.
 
         if (ranAtLeastOne) {
             lastExecutionTime = ScheduledFutureTask.nanoTime();
         }
+        // 运行收尾任务，即运行子类定义的任务
         afterRunningAllTasks();
         return ranAtLeastOne;
     }
@@ -373,13 +393,14 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
      */
     protected final boolean runAllTasksFrom(Queue<Runnable> taskQueue) {
         Runnable task = pollTaskFrom(taskQueue);
-        if (task == null) {
+        if (task == null) { // 首先尝试获取第一个，进行校验
             return false;
         }
         for (;;) {
+            // 执行任务，即调用run方法而已
             safeExecute(task);
-            task = pollTaskFrom(taskQueue);
-            if (task == null) {
+            task = pollTaskFrom(taskQueue); // 继续获取，执行所有任务
+            if (task == null) { // 至少执行一个任务后，才返回true
                 return true;
             }
         }
@@ -388,8 +409,10 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
     /**
      * Poll all tasks from the task queue and run them via {@link Runnable#run()} method.  This method stops running
      * the tasks in the task queue and returns if it ran longer than {@code timeoutNanos}.
+     * @param timeoutNanos 与无参的重载方法相比，该方法控制了任务的执行时间，防止任务执行时间过长，导致IO事件延迟执行
      */
     protected boolean runAllTasks(long timeoutNanos) {
+        // 获取所有就绪任务
         fetchFromScheduledTaskQueue();
         Runnable task = pollTask();
         if (task == null) {
@@ -407,6 +430,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
             // Check timeout every 64 tasks because nanoTime() is relatively expensive.
             // XXX: Hard-coded value - will make it configurable if it is really a problem.
+            // 由于频繁调用nanoTime方法很耗时，所以每执行64个任务调用一次
             if ((runTasks & 0x3F) == 0) {
                 lastExecutionTime = ScheduledFutureTask.nanoTime();
                 if (lastExecutionTime >= deadline) {
@@ -455,7 +479,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
     }
 
     /**
-     *
+     * 核心方法，相当于NIO中的while（true）循环
      */
     protected abstract void run();
 
@@ -762,9 +786,10 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
         }
 
         boolean inEventLoop = inEventLoop();
-        if (inEventLoop) {
+        if (inEventLoop) {  // 如果当前线程不是事件处理线程，那么会创建线程去执行，否则直接加入任务即可
             addTask(task);
         } else {
+            // 启动本地线程
             startThread();
             addTask(task);
             if (isShutdown() && removeTask(task)) {
@@ -857,6 +882,9 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
     private static final long SCHEDULE_PURGE_INTERVAL = TimeUnit.SECONDS.toNanos(1);
 
+    /**
+     * 启动线程进行事件处理，包括IO事件以及任务事件
+     */
     private void startThread() {
         if (state == ST_NOT_STARTED) {
             if (STATE_UPDATER.compareAndSet(this, ST_NOT_STARTED, ST_STARTED)) {
@@ -872,9 +900,11 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
 
     private void doStartThread() {
         assert thread == null;
+        // 每次调用execute方法时，都会创建一个FastThreadLocalThread 来执行任务
         executor.execute(new Runnable() {
             @Override
             public void run() {
+                // 由于start方法只会执行一次，所以以后的所有任务都由该线程执行
                 thread = Thread.currentThread();
                 if (interrupted) {
                     thread.interrupt();
@@ -883,6 +913,7 @@ public abstract class SingleThreadEventExecutor extends AbstractScheduledEventEx
                 boolean success = false;
                 updateLastExecutionTime();
                 try {
+                    // 这里相当于NIO中的 while 循环，会一直在这里执行
                     SingleThreadEventExecutor.this.run();
                     success = true;
                 } catch (Throwable t) {

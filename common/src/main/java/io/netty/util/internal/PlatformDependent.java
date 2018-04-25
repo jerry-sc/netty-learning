@@ -868,6 +868,7 @@ public final class PlatformDependent {
     }
 
     /**
+     * 这里采用 jctool 第三方工具类提供的 MPSC 是一个效率更高的多生产者单一消费者的 线程安全的队列
      * Create a new {@link Queue} which is safe to use for multiple producers (different threads) and a single
      * consumer (one thread!).
      * @return A MPSC queue which may be unbounded.

@@ -20,6 +20,8 @@ import io.netty.util.internal.UnstableApi;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
+ * 事件处理器选择方式 默认实现。默认使用round robin 算法，这里进行了一个小优化：当时间处理器个数为2的N次方的时候，使用 & 运算来加快执行速度；
+ * 否则使用 % 运算，相对较慢
  * Default implementation which uses simple round-robin to choose next {@link EventExecutor}.
  */
 @UnstableApi

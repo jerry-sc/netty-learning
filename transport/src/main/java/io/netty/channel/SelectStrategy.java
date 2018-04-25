@@ -30,6 +30,7 @@ public interface SelectStrategy {
      */
     int SELECT = -1;
     /**
+     * 会返回到循环开始，重新执行循环
      * Indicates the IO loop should be retried, no blocking select to follow directly.
      */
     int CONTINUE = -2;

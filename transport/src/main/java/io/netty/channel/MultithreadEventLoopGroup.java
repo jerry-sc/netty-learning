@@ -27,6 +27,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadFactory;
 
 /**
+ * 该抽象基类主要用于提供channel 注册到 eventLoop 的操作
  * Abstract base class for {@link EventLoopGroup} implementations that handles their tasks with multiple threads at
  * the same time.
  */
@@ -73,6 +74,9 @@ public abstract class MultithreadEventLoopGroup extends MultithreadEventExecutor
         return new DefaultThreadFactory(getClass(), Thread.MAX_PRIORITY);
     }
 
+    /**
+     * @return 根据分配算法获取一个EventLoop
+     */
     @Override
     public EventLoop next() {
         return (EventLoop) super.next();

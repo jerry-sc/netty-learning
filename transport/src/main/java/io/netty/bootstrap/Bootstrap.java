@@ -176,8 +176,10 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
             if (!regFuture.isSuccess()) {
                 return regFuture;
             }
+            // 如果当前已经注册成功了，那么进行连接操作
             return doResolveAndConnect0(channel, remoteAddress, localAddress, channel.newPromise());
         } else {
+            // 由于注册是异步操作，所以当然有可能还没有完成，那么注册监听事件，当完成后，再进行连接操作
             // Registration future is almost always fulfilled already, but just in case it's not.
             final PendingRegistrationPromise promise = new PendingRegistrationPromise(channel);
             regFuture.addListener(new ChannelFutureListener() {
@@ -194,6 +196,7 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
                         // Registration was successful, so set the correct executor to use.
                         // See https://github.com/netty/netty/issues/2586
                         promise.registered();
+                        // 监听事件生效，再次尝试连接
                         doResolveAndConnect0(channel, remoteAddress, localAddress, promise);
                     }
                 }

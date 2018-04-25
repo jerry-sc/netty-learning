@@ -85,7 +85,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
     private boolean firstRegistration = true;
 
     /**
-     * 由于时间处理器还没有被注册进来，所以开始之前的事件都被临时链接起来
+     * 由于事件处理器还没有被注册进来，所以开始之前的事件都被临时链接起来
      * This is the head of a linked list that is processed by {@link #callHandlerAddedForAllHandlers()} and so process
      * all the pending {@link #callHandlerAdded0(AbstractChannelHandlerContext)}.
      *
@@ -1500,7 +1500,7 @@ public class DefaultChannelPipeline implements ChannelPipeline {
         PendingHandlerCallback(AbstractChannelHandlerContext ctx) {
             this.ctx = ctx;
         }
-
+        // 相当于回调方法，当executor设置后，会回调
         abstract void execute();
     }
 

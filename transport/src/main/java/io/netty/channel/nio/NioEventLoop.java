@@ -49,9 +49,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * 所有EventLoop承担着两种职责：1、执行IO事件；2、执行任务队列中任务的执行
+ *
+ * 1. 由于一个该类继承了AbstractScheduledEventExecutor，所以该类具有调度执行任务的功能
+ * 2. 在 SingleThreadEventLoop 中, 又实现了任务队列的功能, 通过它, 我们可以调用一个 NioEventLoop 实例的 execute
+ *      方法来向任务队列中添加一个 task, 并由 NioEventLoop 进行调度执行
+ *
  * {@link SingleThreadEventLoop} implementation which register the {@link Channel}'s to a
  * {@link Selector} and so does the multi-plexing of these in the event loop.
- *
  */
 public final class NioEventLoop extends SingleThreadEventLoop {
 
@@ -114,10 +119,15 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     }
 
     /**
+     * 也可以看到，一个事件执行器对应一个Selector，相当于一条线程对应一个Selector
      * The NIO {@link Selector}.
      */
     private Selector selector;
     private Selector unwrappedSelector;
+
+    /**
+     * 但由于一个selector可以对应channel，即有多个selectedkey ，所以这里使用集合表示
+     */
     private SelectedSelectionKeySet selectedKeys;
 
     private final SelectorProvider provider;
@@ -132,7 +142,11 @@ public final class NioEventLoop extends SingleThreadEventLoop {
 
     private final SelectStrategy selectStrategy;
 
+    /**
+     * 执行IO就绪事件 与 执行 task任务 两者的时间比
+     */
     private volatile int ioRatio = 50;
+
     private int cancelledKeys;
     private boolean needsToSelectAgain;
 
@@ -146,6 +160,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
             throw new NullPointerException("selectStrategy");
         }
         provider = selectorProvider;
+        // 创建 selector
         final SelectorTuple selectorTuple = openSelector();
         selector = selectorTuple.selector;
         unwrappedSelector = selectorTuple.unwrappedSelector;
@@ -402,10 +417,12 @@ public final class NioEventLoop extends SingleThreadEventLoop {
     protected void run() {
         for (;;) {
             try {
+                // 首先
                 switch (selectStrategy.calculateStrategy(selectNowSupplier, hasTasks())) {
                     case SelectStrategy.CONTINUE:
                         continue;
                     case SelectStrategy.SELECT:
+                        // 如果队列中没有任务，那么会
                         select(wakenUp.getAndSet(false));
 
                         // 'wakenUp.compareAndSet(false, true)' is always evaluated
@@ -448,6 +465,7 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 final int ioRatio = this.ioRatio;
                 if (ioRatio == 100) {
                     try {
+                        // 处理IO就绪事件
                         processSelectedKeys();
                     } finally {
                         // Ensure we always run tasks.
@@ -456,10 +474,13 @@ public final class NioEventLoop extends SingleThreadEventLoop {
                 } else {
                     final long ioStartTime = System.nanoTime();
                     try {
+                        // 处理IO就绪事件
                         processSelectedKeys();
                     } finally {
                         // Ensure we always run tasks.
+                        // 计算得到IO操作运行的时间
                         final long ioTime = System.nanoTime() - ioStartTime;
+                        // 知道了IO运行的时间，以及IO操作的占比，那么我们就可以计算出 task任务需要运行的时间
                         runAllTasks(ioTime * (100 - ioRatio) / ioRatio);
                     }
                 }

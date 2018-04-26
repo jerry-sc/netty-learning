@@ -210,13 +210,13 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
         try {
             final EventLoop eventLoop = channel.eventLoop();
             final AddressResolver<SocketAddress> resolver = this.resolver.getResolver(eventLoop);
-
+            // 判断地址是否能够解析， 并且是否已经解析过
             if (!resolver.isSupported(remoteAddress) || resolver.isResolved(remoteAddress)) {
                 // Resolver has no idea about what to do with the specified remote address or it's resolved already.
                 doConnect(remoteAddress, localAddress, promise);
                 return promise;
             }
-
+            // 进行地址解析
             final Future<SocketAddress> resolveFuture = resolver.resolve(remoteAddress);
 
             if (resolveFuture.isDone()) {
@@ -251,6 +251,12 @@ public class Bootstrap extends AbstractBootstrap<Bootstrap, Channel> {
         return promise;
     }
 
+    /**
+     * 真正连接开始的地方
+     * @param remoteAddress 远程地址
+     * @param localAddress 本地地址
+     * @param connectPromise 异步结果
+     */
     private static void doConnect(
             final SocketAddress remoteAddress, final SocketAddress localAddress, final ChannelPromise connectPromise) {
 

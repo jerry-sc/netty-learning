@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.netty.channel.ChannelPromise</OriginalElement>
+  <nodes>
+    <node x="-871.75" y="53.0">io.netty.channel.VoidChannelPromise</node>
+    <node x="-960.75" y="-26.0">io.netty.util.concurrent.DefaultPromise</node>
+    <node x="-822.5" y="-263.0">java.util.concurrent.Future</node>
+    <node x="-847.0" y="-105.0">io.netty.util.concurrent.AbstractFuture</node>
+    <node x="-1115.75" y="-26.0">io.netty.channel.ChannelPromise</node>
+    <node x="-996.75" y="-105.0">io.netty.util.concurrent.Promise</node>
+    <node x="-987.5" y="-263.0">java.lang.SuppressWarnings</node>
+    <node x="-701.0" y="-105.0">io.netty.util.concurrent.ProgressiveFuture</node>
+    <node x="-889.25" y="-184.0">io.netty.util.concurrent.Future</node>
+    <node x="-1078.53125" y="53.0">io.netty.channel.DefaultChannelPromise</node>
+    <node x="-1145.0" y="-105.0">io.netty.channel.ChannelFuture</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.netty.channel.VoidChannelPromise" target="io.netty.util.concurrent.AbstractFuture">
+      <point x="39.75" y="-14.5" />
+      <point x="31.5" y="14.5" />
+    </edge>
+    <edge source="io.netty.util.concurrent.DefaultPromise" target="io.netty.util.concurrent.Promise">
+      <point x="-32.25" y="-14.5" />
+      <point x="22.75" y="14.5" />
+    </edge>
+    <edge source="io.netty.util.concurrent.DefaultPromise" target="io.netty.util.concurrent.AbstractFuture">
+      <point x="32.25" y="-14.5" />
+      <point x="-864.0" y="-51.0" />
+      <point x="-815.5" y="-51.0" />
+      <point x="-31.5" y="14.5" />
+    </edge>
+    <edge source="io.netty.channel.DefaultChannelPromise" target="io.netty.util.concurrent.DefaultPromise">
+      <point x="43.25" y="-14.5" />
+      <point x="-948.78125" y="33.0" />
+      <point x="-896.25" y="33.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.channel.DefaultChannelPromise" target="io.netty.channel.ChannelPromise">
+      <point x="-43.25" y="-14.5" />
+      <point x="-1035.28125" y="33.0" />
+      <point x="-1082.0" y="33.0" />
+      <point x="-33.75" y="14.5" />
+    </edge>
+    <edge source="io.netty.util.concurrent.Promise" target="io.netty.util.concurrent.Future">
+      <point x="0.0" y="-14.5" />
+      <point x="-951.25" y="-125.0" />
+      <point x="-858.5" y="-125.0" />
+      <point x="-10.25" y="14.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelFuture" target="io.netty.util.concurrent.Future">
+      <point x="0.0" y="-14.5" />
+      <point x="-1082.0" y="-135.0" />
+      <point x="-879.0" y="-135.0" />
+      <point x="-30.75" y="14.5" />
+    </edge>
+    <edge source="io.netty.util.concurrent.AbstractFuture" target="io.netty.util.concurrent.Future">
+      <point x="0.0" y="-14.5" />
+      <point x="-784.0" y="-125.0" />
+      <point x="-838.0" y="-125.0" />
+      <point x="10.25" y="14.5" />
+    </edge>
+    <edge source="io.netty.util.concurrent.Future" target="java.util.concurrent.Future">
+      <point x="20.5" y="-14.5" />
+      <point x="-827.75" y="-209.0" />
+      <point x="-781.5" y="-209.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.util.concurrent.ProgressiveFuture" target="io.netty.util.concurrent.Future">
+      <point x="0.0" y="-14.5" />
+      <point x="-630.0" y="-135.0" />
+      <point x="-817.5" y="-135.0" />
+      <point x="30.75" y="14.5" />
+    </edge>
+    <edge source="io.netty.util.concurrent.Future" target="java.lang.SuppressWarnings">
+      <point x="-20.5" y="-14.5" />
+      <point x="-868.75" y="-209.0" />
+      <point x="-915.0" y="-209.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelPromise" target="io.netty.channel.ChannelFuture">
+      <point x="-33.75" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.channel.VoidChannelPromise" target="io.netty.channel.ChannelPromise">
+      <point x="-39.75" y="-14.5" />
+      <point x="-832.0" y="23.0" />
+      <point x="-1014.5" y="23.0" />
+      <point x="33.75" y="14.5" />
+    </edge>
+    <edge source="io.netty.channel.ChannelPromise" target="io.netty.util.concurrent.Promise">
+      <point x="33.75" y="-14.5" />
+      <point x="-1014.5" y="-51.0" />
+      <point x="-974.0" y="-51.0" />
+      <point x="-22.75" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="-556.0" y="82.5" />
+  <SelectedNodes />
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

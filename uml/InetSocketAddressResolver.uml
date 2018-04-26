@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.netty.resolver.InetSocketAddressResolver</OriginalElement>
+  <nodes>
+    <node x="-850.0" y="-137.0">io.netty.util.internal.UnstableApi</node>
+    <node x="-953.0" y="-58.0">io.netty.resolver.AddressResolver</node>
+    <node x="-888.75" y="100.0">io.netty.resolver.InetSocketAddressResolver</node>
+    <node x="-969.0" y="-137.0">java.io.Closeable</node>
+    <node x="-930.5" y="21.0">io.netty.resolver.AbstractAddressResolver</node>
+    <node x="-982.0" y="-216.0">java.lang.AutoCloseable</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.netty.resolver.AddressResolver" target="java.io.Closeable">
+      <point x="-33.5" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.InetSocketAddressResolver" target="io.netty.util.internal.UnstableApi">
+      <point x="47.25" y="-14.5" />
+      <point x="-747.0" y="75.0" />
+      <point x="-742.0" y="75.0" />
+      <point x="-742.0" y="-83.0" />
+      <point x="-756.6666666666666" y="-83.0" />
+      <point x="37.33333333333334" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.AbstractAddressResolver" target="io.netty.util.internal.UnstableApi">
+      <point x="44.5" y="-14.5" />
+      <point x="-797.0" y="-4.0" />
+      <point x="-794.9444444444445" y="-4.0" />
+      <point x="7.105427357601002E-15" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.AbstractAddressResolver" target="io.netty.resolver.AddressResolver">
+      <point x="-44.5" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.AddressResolver" target="io.netty.util.internal.UnstableApi">
+      <point x="33.5" y="-14.5" />
+      <point x="-852.5" y="-83.0" />
+      <point x="-831.3333333333334" y="-83.0" />
+      <point x="-37.333333333333336" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.InetSocketAddressResolver" target="io.netty.resolver.AbstractAddressResolver">
+      <point x="-47.25" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="java.io.Closeable" target="java.lang.AutoCloseable">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="-330.5" y="82.5" />
+  <SelectedNodes>
+    <node>io.netty.resolver.InetSocketAddressResolver</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+

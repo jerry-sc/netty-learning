@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>io.netty.resolver.DefaultNameResolver</OriginalElement>
+  <nodes>
+    <node x="-948.75" y="-126.0">io.netty.util.internal.UnstableApi</node>
+    <node x="-953.4615384615385" y="190.0">io.netty.resolver.DefaultNameResolver</node>
+    <node x="-1056.5" y="-47.0">io.netty.resolver.NameResolver</node>
+    <node x="-1075.0" y="-126.0">java.io.Closeable</node>
+    <node x="-985.7115384615385" y="111.0">io.netty.resolver.InetNameResolver</node>
+    <node x="-1088.0" y="-205.0">java.lang.AutoCloseable</node>
+    <node x="-1038.25" y="32.0">io.netty.resolver.SimpleNameResolver</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="io.netty.resolver.DefaultNameResolver" target="io.netty.util.internal.UnstableApi">
+      <point x="40.5" y="-14.5" />
+      <point x="-831.2115384615385" y="-72.0" />
+      <point x="-850.75" y="-72.0" />
+      <point x="42.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.SimpleNameResolver" target="io.netty.util.internal.UnstableApi">
+      <point x="40.0" y="-14.5" />
+      <point x="-918.0" y="-72.0" />
+      <point x="-906.75" y="-72.0" />
+      <point x="-14.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.NameResolver" target="java.io.Closeable">
+      <point x="-31.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="java.io.Closeable" target="java.lang.AutoCloseable">
+      <point x="0.0" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.InetNameResolver" target="io.netty.resolver.SimpleNameResolver">
+      <point x="-36.0" y="-14.5" />
+      <point x="-949.7115384615385" y="86.0" />
+      <point x="-958.25" y="86.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.NameResolver" target="io.netty.util.internal.UnstableApi">
+      <point x="31.0" y="-14.5" />
+      <point x="-963.5" y="-72.0" />
+      <point x="-934.75" y="-72.0" />
+      <point x="-42.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.InetNameResolver" target="io.netty.util.internal.UnstableApi">
+      <point x="36.0" y="-14.5" />
+      <point x="-877.7115384615385" y="86.0" />
+      <point x="-867.75" y="86.0" />
+      <point x="-867.75" y="-72.0" />
+      <point x="-878.75" y="-72.0" />
+      <point x="14.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.DefaultNameResolver" target="io.netty.resolver.InetNameResolver">
+      <point x="-40.5" y="-14.5" />
+      <point x="0.0" y="14.5" />
+    </edge>
+    <edge source="io.netty.resolver.SimpleNameResolver" target="io.netty.resolver.NameResolver">
+      <point x="-40.0" y="-14.5" />
+      <point x="-998.25" y="7.0" />
+      <point x="-994.5" y="7.0" />
+      <point x="0.0" y="14.5" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="-323.5" y="122.0" />
+  <SelectedNodes>
+    <node>io.netty.resolver.DefaultNameResolver</node>
+  </SelectedNodes>
+  <Categories />
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>private</VISIBILITY>
+</Diagram>
+
